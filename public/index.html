@@ -1,0 +1,1552 @@
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>F1 Fantasy Team Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #080950, #000000);
+            min-height: 100vh;
+            color: white;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Pantalla de login inicial */
+        .login-screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #080950, #000000);
+        }
+
+        .login-container {
+            background: rgba(0,0,0,0.8);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .login-container h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .login-container p {
+            margin-bottom: 30px;
+            color: #cccccc;
+        }
+
+        .login-container input {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border: none;
+            font-size: 1.1em;
+            background: rgba(255,255,255,0.9);
+            color: black;
+        }
+
+        .login-container input::placeholder {
+            color: #666;
+        }
+
+        .login-container button {
+            background: linear-gradient(45deg, #ffff00, #ff8800);
+            color: black;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.2em;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .login-container button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(255,255,0,0.4);
+        }
+
+        .credentials-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            font-size: 0.9em;
+        }
+
+        /* Contenido principal (inicialmente oculto) */
+        .main-content {
+            display: none;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        /* Estilos para el menú de usuario */
+        .user-menu {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .menu-button {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+
+        .menu-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: rgba(0,0,0,0.9);
+            border-radius: 5px;
+            padding: 10px;
+            min-width: 250px;
+            z-index: 100;
+        }
+
+        .menu-dropdown.show {
+            display: block;
+        }
+
+        .menu-dropdown h4 {
+            margin-bottom: 10px;
+            color: #ffff00;
+        }
+
+        .history-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #333;
+        }
+
+        .auth-section {
+            position: absolute;
+            top: 0;
+            right: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .username {
+            margin-right: 10px;
+        }
+
+        .logout-button {
+            background: #ff0000;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .budget {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .budget h2 {
+            margin-bottom: 10px;
+        }
+
+        .budget-display {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .section {
+            background: rgba(255,255,255,0.1);
+            margin-bottom: 20px;
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .section h3 {
+            margin-bottom: 15px;
+            color: #ffff00;
+            border-bottom: 2px solid #ffff00;
+            padding-bottom: 5px;
+        }
+
+        .driver-grid, .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+        }
+
+        .driver-card, .team-card {
+            background: rgba(0,0,0,0.3);
+            border: 2px solid transparent;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .driver-card:hover, .team-card:hover {
+            border-color: #ffff00;
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(255,255,0,0.3);
+        }
+
+        .driver-card.selected, .team-card.selected {
+            border-color: #00ff00;
+            background: rgba(0,255,0,0.2);
+        }
+
+        .driver-image {
+            width: 80px !important;
+            height: 80px !important;
+            object-fit: cover !important;
+            object-position: center top !important;
+            border-radius: 50% !important;
+            margin-bottom: 10px !important;
+            border: 2px solid rgba(255,255,255,0.3) !important;
+            display: block !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+        }
+
+        .driver-name, .team-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .driver-team {
+            color: #cccccc;
+            margin-bottom: 10px;
+        }
+
+        .price {
+            color: #ffff00;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .save-team {
+            background: linear-gradient(45deg, #00ff00, #008800);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border-radius: 25px;
+            cursor: pointer;
+            display: block;
+            margin: 30px auto;
+            transition: all 0.3s ease;
+        }
+
+        .save-team:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,255,0,0.4);
+        }
+
+        .save-team:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .message {
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .success {
+            background: rgba(0,255,0,0.2);
+            border: 1px solid #00ff00;
+        }
+
+        .error {
+            background: rgba(255,0,0,0.2);
+            border: 1px solid #ff0000;
+        }
+
+        .team-summary {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+
+        .selected-count {
+            font-size: 0.9em;
+            color: #ffff00;
+            margin-top: 10px;
+        }
+
+        .arcade-menu {
+            position: absolute;
+            top: 0;
+            left: 60px;
+            z-index: 101;
+        }
+
+        .arcade-button {
+            background: linear-gradient(45deg, #00ffea, #ff8800);
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+        }
+
+        .arcade-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: rgba(0,0,0,0.95);
+            border-radius: 8px;
+            padding: 12px;
+            min-width: 220px;
+            z-index: 102;
+        }
+
+        .arcade-dropdown button {
+            width: 100%;
+            margin-bottom: 8px;
+            background: #222;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        .arcade-dropdown button:hover {
+            background: #00ffea;
+            color: #222;
+        }
+    </style>
+</head>
+<body>
+    <!-- Pantalla de login inicial -->
+    <div class="login-screen" id="login-screen">
+        <div class="login-container">
+            <h1>🏎️ F1 Fantasy</h1>
+            <p>Inicia sesión para acceder a las opciones de tu equipo</p>
+            <input type="text" id="initial-username" placeholder="Nombre de usuario" required>
+            <input type="password" id="initial-password" placeholder="Contraseña" required>
+            <button id="initial-login-button">Iniciar Sesión</button>
+            <div id="initial-message" class="message" style="display: none; margin-top: 20px;"></div>
+            
+            <div class="credentials-info">
+                <strong>Credenciales de prueba:</strong><br>
+                Usuario: jdoe | Contraseña: password1<br>
+                Usuario: asmith | Contraseña: password2
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="main-content" id="main-content">
+        <div class="container">
+            <header>
+                <div class="user-menu">
+                    <button class="menu-button" id="menu-button">☰</button>
+                    <div class="menu-dropdown" id="menu-dropdown">
+                        <h4>Historial de movimientos de compra</h4>
+                        <div id="history-list">
+                            <!-- Historial se cargará aquí -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="arcade-menu">
+                    <button class="arcade-button" id="arcade-button">Arcade</button>
+                    <div class="arcade-dropdown" id="arcade-dropdown">
+                        <h4 style="color:#00ffea;margin-bottom:10px;">🎮 Minijuegos</h4>
+                        <button class="game-option" data-game="racing">🏎️ Mini Carrera</button>
+                        <button class="game-option" data-game="memory">🧠 Memoria F1</button>
+                        <button class="game-option" data-game="trivia">❓ Trivia F1</button>
+                        <button class="game-option" data-game="reaction">⚡ Tiempo de Reacción</button>
+                    </div>
+                </div>
+                
+                <h1>🏎️ F1 Fantasy Teams 🏎️</h1>
+                <p>Construye tu equipo con un presupuesto de $100M</p>
+                
+                <div class="auth-section">
+                    <div id="user-info" class="user-info">
+                        <span class="username" id="username-display"></span>
+                        <button class="logout-button" id="logout-button">Cerrar sesión</button>
+                    </div>
+                </div>
+            </header>
+
+            <div class="budget">
+                <h2>💰 Presupuesto disponible:</h2>
+                <div class="budget-display">
+                    $<span id="remaining-budget">100.0</span>M / $<span id="total-budget">100.0</span>M
+                </div>
+            </div>
+
+            <!-- Bloque para puntos -->
+            <div class="points" style="background:rgba(255,255,255,0.1);padding:15px;border-radius:10px;text-align:center;margin-bottom:30px;backdrop-filter:blur(10px);">
+                <h2>🏆 Puntos acumulados:</h2>
+                <div class="points-display" style="font-size:1.5em;font-weight:bold;">
+                    <span id="main-user-points">0</span> pts
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>🏁 Selecciona 5 pilotos</h3>
+                <div class="selected-count">
+                    Seleccionados: <span id="driver-count">0</span>/5
+                </div>
+                <div id="drivers-container" class="driver-grid">
+                    <!-- Los pilotos se cargarán aquí -->
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>🏆 Selecciona 1 equipo</h3>
+                <div class="selected-count">
+                    Seleccionados: <span id="team-count">0</span>/1
+                </div>
+                <div id="teams-container" class="team-grid">
+                    <!-- Los equipos se cargarán aquí -->
+                </div>
+            </div>
+
+            <button id="save-team" class="save-team">Guardar equipo</button>
+
+            <div id="message" class="message" style="display: none;"></div>
+
+            <div id="team-summary" class="team-summary" style="display: none;">
+                <h3>📊 Resumen del equipo</h3>
+                <div id="summary-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de arcade -->
+    <div id="arcade-modal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.85);z-index:200;align-items:center;justify-content:center;">
+        <div style="background:#181818;padding:30px 20px 20px 20px;border-radius:18px;max-width:400px;width:90vw;position:relative;">
+            <button id="close-arcade" style="position:absolute;top:10px;right:10px;background:#ff4444;color:white;border:none;border-radius:50%;width:32px;height:32px;font-size:1.3em;cursor:pointer;">×</button>
+            <div id="user-stats" style="margin-bottom:10px;text-align:center;">
+                <span id="user-points">🏆 Puntos: 0</span> &nbsp;|&nbsp; <span id="user-money">💰 Dinero: $0M</span>
+            </div>
+            <div id="game-area"></div>
+        </div>
+    </div>
+</body>
+</html>
+
+    <script>
+        // Datos de usuarios (simulando una base de datos)
+        const users = [
+            { id: 1, username: 'jdoe', email: 'jdoe@example.com', password: 'password1' },
+            { id: 2, username: 'asmith', email: 'asmith@example.com', password: 'password2' },
+            { id: 3, username: 'bjohnson', email: 'bjohnson@example.com', password: 'password3' },
+            { id: 4, username: 'cmiller', email: 'cmiller@example.com', password: 'password4' },
+            { id: 5, username: 'dlee', email: 'dlee@example.com', password: 'password5' },
+            { id: 6, username: 'ewilson', email: 'ewilson@example.com', password: 'password6' },
+            { id: 7, username: 'fmoore', email: 'fmoore@example.com', password: 'password7' },
+            { id: 8, username: 'gclark', email: 'gclark@example.com', password: 'password8' },
+            { id: 9, username: 'hrodriguez', email: 'hrodriguez@example.com', password: 'password9' },
+            { id: 10, username: 'ikim', email: 'ikim@example.com', password: 'password10' },
+            { id: 11, username: 'samu23', email: 'samuel@example.com', password: 'samuelmora23' }
+        ];
+
+        // Datos de historial (simulado)
+        const userHistory = {
+            1: [
+                { date: '2023-05-10', action: 'Equipo creado: Pilotos A, B, C, D, E - Escudería Mercedes' },
+                { date: '2023-05-15', action: 'Equipo modificado: Cambió piloto E por F' }
+            ],
+            2: [
+                { date: '2023-05-11', action: 'Equipo creado: Pilotos G, H, I, J, K - Escudería Ferrari' }
+            ]
+        };
+
+        let drivers = [];
+        let teams = [];
+        let selectedDrivers = [];
+        let selectedTeam = null;
+        let totalBudget = 100.0;
+        let currentUser = null;
+
+        // Elementos del DOM
+        const loginScreen = document.getElementById('login-screen');
+        const mainContent = document.getElementById('main-content');
+        const initialLoginButton = document.getElementById('initial-login-button');
+        const initialMessage = document.getElementById('initial-message');
+        const usernameDisplay = document.getElementById('username-display');
+        const logoutButton = document.getElementById('logout-button');
+        const menuButton = document.getElementById('menu-button');
+        const menuDropdown = document.getElementById('menu-dropdown');
+        const historyList = document.getElementById('history-list');
+
+        // Event listeners
+      initialLoginButton.addEventListener('click', handleInitialLogin);
+logoutButton.addEventListener('click', handleLogout);
+menuButton.addEventListener('click', () => {
+    menuDropdown.classList.toggle('show');
+});
+
+// Agrega aquí:
+const saveTeamButton = document.getElementById('save-team');
+saveTeamButton.addEventListener('click', saveTeam);
+
+        // Permitir login con Enter
+        document.getElementById('initial-username').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') handleInitialLogin();
+        });
+        document.getElementById('initial-password').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') handleInitialLogin();
+        });
+
+        // Función para manejar el login inicial
+        function handleInitialLogin() {
+            const username = document.getElementById('initial-username').value;
+            const password = document.getElementById('initial-password').value;
+            
+            if (!username || !password) {
+                showInitialMessage('Por favor, completa todos los campos', 'error');
+                return;
+            }
+            
+            // Validación simple (en un caso real, esto sería con hash y backend seguro)
+            const user = users.find(u => u.username === username && u.password === password);
+            
+            if (user) {
+                currentUser = user;
+                loginScreen.style.display = 'none';
+                mainContent.style.display = 'block';
+                usernameDisplay.textContent = currentUser.username;
+                loadUserHistory();
+                loadData();
+                showMessage(`Bienvenido, ${user.username}!`, 'success');
+                // --- INICIALIZA LOS EVENTOS DE ARCADE AQUÍ ---
+                initArcadeEvents();
+                // --- INICIALIZA LOS PUNTOS Y DINERO DEL USUARIO AQUÍ ---
+                initUserStats(); // <--- AGREGA ESTA LÍNEA
+            } else {
+                showInitialMessage('Usuario o contraseña incorrectos', 'error');
+            }
+        }
+
+        // Función para manejar el logout
+        function handleLogout() {
+            currentUser = null;
+            selectedDrivers = [];
+            selectedTeam = null;
+            loginScreen.style.display = 'flex';
+            mainContent.style.display = 'none';
+            document.getElementById('initial-username').value = '';
+            document.getElementById('initial-password').value = '';
+            document.getElementById('team-summary').style.display = 'none';
+            updateUI();
+        }
+
+        // Cargar historial del usuario
+        function loadUserHistory() {
+            if (!currentUser) return;
+            
+            const history = userHistory[currentUser.id] || [];
+            historyList.innerHTML = history.length > 0 ? 
+                history.map(item => `
+                    <div class="history-item">
+                        <strong>${item.date}</strong>: ${item.action}
+                    </div>
+                `).join('') : 
+                '<div class="history-item">No hay movimientos registrados</div>';
+        }
+
+        // Cargar datos (ahora directamente sin servidor)
+        function loadData() {
+            // Datos hardcodeados directamente en el código
+            drivers = [
+                { 
+                    id: 1, 
+                    name: 'Oscar Piastri', 
+                    team: 'McLaren', 
+                    price: 16.8, 
+                    number: 81, 
+                    nationality: 'Australia',
+                    image: 'https://www.formula1.com/content/dam/fom-website/drivers/O/OSCPIA01_Oscar_Piastri/oscpia01.png.transform/1col/image.png'
+                },
+                { 
+                    id: 2, 
+                    name: 'Lando Norris', 
+                    team: 'McLaren', 
+                    price: 17.5, 
+                    number: 4, 
+                    nationality: 'United Kingdom',
+                    image: 'https://www.formula1.com/content/dam/fom-website/drivers/L/LANNOR01_Lando_Norris/lannor01.png.transform/1col/image.png'
+                },
+                { 
+                    id: 3, 
+                    name: 'Max Verstappen', 
+                    team: 'Red Bull Racing', 
+                    price: 19.5, 
+                    number: 1, 
+                    nationality: 'Netherlands',
+                    image: 'https://www.formula1.com/content/dam/fom-website/drivers/M/MAXVER01_Max_Verstappen/maxver01.png.transform/1col/image.png'
+                },
+                { 
+                    id: 4, 
+                    name: 'George Russell', 
+                    team: 'Mercedes', 
+                    price: 15.2, 
+                    number: 63, 
+                    nationality: 'United Kingdom',
+                    image: 'https://www.formula1.com/content/dam/fom-website/drivers/G/GEORUS01_George_Russell/georus01.png.transform/1col/image.png'
+                },
+                { 
+                    id: 5, 
+                    name: 'Charles Leclerc', 
+                    team: 'Ferrari', 
+                    price: 17.8, 
+                    number: 16, 
+                    nationality: 'Monaco',
+                    image: 'https://www.formula1.com/content/dam/fom-website/drivers/C/CHALEC01_Charles_Leclerc/chalec01.png.transform/1col/image.png'
+                },
+                { 
+                    id: 6, 
+                    name: 'Kimi Antonelli', 
+                    team: 'Mercedes', 
+                    price: 12.5, 
+                    number: 12, 
+                    nationality: 'Italy',
+                    image: 'https://images.ctfassets.net/1fvlg6xqnm65/5YiTw6xQHuM94ty9yLDnyk/ff67d40c690940307f48d1b370352577/Kimi_Antonelli.png'
+                },
+                { 
+                    id: 7, 
+                    name: 'Lewis Hamilton', 
+                    team: 'Ferrari', 
+                    price: 18.2, 
+                    number: 44, 
+                    nationality: 'United Kingdom',
+                    image: 'https://www.formula1.com/content/dam/fom-website/drivers/L/LEWHAM01_Lewis_Hamilton/lewham01.png.transform/1col/image.png'
+                },
+                { 
+                    id: 8, 
+                    name: 'Alexander Albon', 
+                    team: 'Williams', 
+                    price: 10.8, 
+                    number: 23, 
+                    nationality: 'Thailand',
+                    image: 'https://www.formula1.com/content/dam/fom-website/drivers/A/ALEALB01_Alexander_Albon/alealb01.png.transform/1col/image.png'
+                },
+                { 
+                    id: 9, 
+                    name: 'Esteban Ocon', 
+                    team: 'Haas', 
+                    price: 11.5, 
+                    number: 31, 
+                    nationality: 'France',
+                    image: 'https://www.formula1.com/content/dam/fom-website/drivers/E/ESTOCO01_Esteban_Ocon/estoco01.png.transform/1col/image.png'
+                },
+                { 
+                    id: 10, 
+                    name: 'Lance Stroll', 
+                    team: 'Aston Martin', 
+                    price: 9.2, 
+                    number: 18, 
+                    nationality: 'Canada',
+                    image: 'https://www.formula1.com/content/dam/fom-website/drivers/L/LANSTR01_Lance_Stroll/lanstr01.png.transform/1col/image.png'
+                },
+                { 
+                    id: 11, 
+                    name: 'Yuki Tsunoda', 
+                    team: 'Red Bull Racing', 
+                    price: 10.3, 
+                    number: 22, 
+                    nationality: 'Japan',
+                    image: 'https://www.formula1.com/content/dam/fom-website/drivers/Y/YUKTSU01_Yuki_Tsunoda/yuktsu01.png.transform/1col/image.png'
+                },
+                { 
+                    id: 12, 
+                    name: 'Pierre Gasly', 
+                    team: 'Alpine', 
+                    price: 11.8, 
+                    number: 10, 
+                    nationality: 'France',
+                    image: 'https://www.formula1.com/content/dam/fom-website/drivers/P/PIEGAS01_Pierre_Gasly/piegas01.png.transform/1col/image.png'
+                },
+                { 
+                    id: 13, 
+                    name: 'Carlos Sainz', 
+                    team: 'Williams', 
+                    price: 14.7, 
+                    number: 55, 
+                    nationality: 'Spain',
+                    image: 'https://www.formula1.com/content/dam/fom-website/drivers/C/CARSAI01_Carlos_Sainz/carsai01.png.transform/1col/image.png'
+                },
+                { 
+                    id: 14, 
+                    name: 'Nico Hulkenberg', 
+                    team: 'Kick Sauber', 
+                    price: 9.5, 
+                    number: 27, 
+                    nationality: 'Germany',
+                    image: 'https://www.formula1.com/content/dam/fom-website/drivers/N/NICHUL01_Nico_Hulkenberg/nichul01.png.transform/1col/image.png'
+                },
+                { 
+                    id: 15, 
+                    name: 'Oliver Bearman', 
+                    team: 'Haas', 
+                    price: 8.5, 
+                    number: 87, 
+                    nationality: 'United Kingdom',
+                    image: 'https://soymotor.com/sites/default/files/2025-03/obearman_2025.png'
+                },
+                { 
+                    id: 16, 
+                    name: 'Isack Hadjar', 
+                    team: 'Racing Bulls', 
+                    price: 7.8, 
+                    number: 6, 
+                    nationality: 'France',
+                    image: 'https://e0.365dm.com/f1/drivers/256x256/h_full_1551.png'
+                },
+                { 
+                    id: 17, 
+                    name: 'Fernando Alonso', 
+                    team: 'Aston Martin', 
+                    price: 13.1, 
+                    number: 14, 
+                    nationality: 'Spain',
+                    image: 'https://www.formula1.com/content/dam/fom-website/drivers/F/FERALO01_Fernando_Alonso/feralo01.png.transform/1col/image.png'
+                },
+                { 
+                    id: 18, 
+                    name: 'Liam Lawson', 
+                    team: 'Racing Bulls', 
+                    price: 8.2, 
+                    number: 30, 
+                    nationality: 'New Zealand',
+                    image: 'https://image-service.zaonce.net/eyJidWNrZXQiOiJmcm9udGllci1jbXMiLCJrZXkiOiJmMW1hbmFnZXIvMjAyMy9kcml2ZXJzL2hlYWRzaG90cy9mMS9sYXcucG5nIiwiZWRpdHMiOnsicmVzaXplIjp7IndpZHRoIjo1MDB9fX0='
+                },
+                { 
+                    id: 19, 
+                    name: 'Jack Doohan', 
+                    team: 'Alpine', 
+                    price: 7.5, 
+                    number: 7, 
+                    nationality: 'Australia',
+                    image: 'https://soymotor.com/sites/default/files/2025-03/jdoohan_2025.png'
+                },
+                { 
+                    id: 20, 
+                    name: 'Gabriel Bortoleto', 
+                    team: 'Kick Sauber', 
+                    price: 7.0, 
+                    number: 5, 
+                    nationality: 'Brazil',
+                    image: 'https://e0.365dm.com/f1/drivers/256x256/h_full_1568.png'
+                }
+            ];
+            
+            teams = [
+                { 
+                    id: 1, 
+                    name: 'McLaren', 
+                    price: 32.5,
+                    image: 'https://media.formula1.com/d_team_car_fallback_image.png/content/dam/fom-website/teams/2024/mclaren-logo.png'
+                },
+                { 
+                    id: 2, 
+                    name: 'Ferrari', 
+                    price: 34.8,
+                    image: 'https://media.formula1.com/d_team_car_fallback_image.png/content/dam/fom-website/teams/2024/ferrari-logo.png'
+                },
+                { 
+                    id: 3, 
+                    name: 'Red Bull Racing', 
+                    price: 36.2,
+                    image: 'https://media.formula1.com/d_team_car_fallback_image.png/content/dam/fom-website/teams/2024/red-bull-racing-logo.png'
+                },
+                { 
+                    id: 4, 
+                    name: 'Mercedes', 
+                    price: 28.9,
+                    image: 'https://media.formula1.com/d_team_car_fallback_image.png/content/dam/fom-website/teams/2024/mercedes-logo.png'
+                },
+                { 
+                    id: 5, 
+                    name: 'Aston Martin', 
+                    price: 22.1,
+                    image: 'https://media.formula1.com/d_team_car_fallback_image.png/content/dam/fom-website/teams/2024/aston-martin-logo.png'
+                },
+                { 
+                    id: 6, 
+                    name: 'Alpine', 
+                    price: 19.3,
+    image: 'https://media.formula1.com/d_team_car_fallback_image.png/content/dam/fom-website/teams/2024/alpine-logo.png'
+  },
+  { 
+    id: 7, 
+    name: 'Williams', 
+    price: 25.4,
+    image: 'https://media.formula1.com/d_team_car_fallback_image.png/content/dam/fom-website/teams/2024/williams-logo.png'
+  },
+  { 
+    id: 8, 
+    name: 'Racing Bulls', 
+    price: 16.0,
+    image: 'https://media.formula1.com/d_team_car_fallback_image.png/content/dam/fom-website/teams/2024/rb-logo.png'
+  },
+  { 
+    id: 9, 
+    name: 'Haas', 
+    price: 23.0,
+    image: 'https://media.formula1.com/d_team_car_fallback_image.png/content/dam/fom-website/teams/2024/haas-f1-team-logo.png'
+  },
+  { 
+    id: 10, 
+    name: 'Kick Sauber', 
+    price: 16.5,
+    image: 'https://media.formula1.com/d_team_car_fallback_image.png/content/dam/fom-website/teams/2024/kick-sauber-logo.png'
+  }
+];
+                
+                renderDrivers();
+                renderTeams();
+            }
+        
+function renderDrivers() {
+    const container = document.getElementById('drivers-container');
+    container.innerHTML = drivers.map(driver => `
+        <div class="driver-card" data-id="${driver.id}">
+            ${driver.image ? 
+                `<img src="${driver.image}" alt="${driver.name}" class="driver-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                 <div class="driver-placeholder" style="display: none; width: 60px; height: 60px; border-radius: 50%; background: rgba(255,255,255,0.1); align-items: center; justify-content: center; font-size: 24px; margin-bottom: 10px;">🏎️</div>` :
+                `<div class="driver-placeholder" style="width: 60px; height: 60px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 10px;">🏎️</div>`
+            }
+            <div class="driver-name">${driver.name}</div>
+            <div class="driver-team">${driver.team}</div>
+            ${driver.number ? `<div style="color: #ccc; font-size: 0.9em;">#${driver.number}</div>` : ''}
+            <div class="price">$${driver.price}M</div>
+        </div>
+    `).join('');// Agregar event listeners
+    container.querySelectorAll('.driver-card').forEach(card => {
+        card.addEventListener('click', () => selectDriver(parseInt(card.dataset.id)));
+    });
+}
+
+        
+        function renderTeams() {
+            const container = document.getElementById('teams-container');
+            container.innerHTML = teams.map(team => `
+                <div class="team-card" data-id="${team.id}">
+                    ${team.image ? 
+                        `<img src="${team.image}" alt="${team.name}" class="team-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                         <div class="team-placeholder" style="display: none; width: 50px; height: 50px; border-radius: 8px; background: rgba(255,255,255,0.1); align-items: center; justify-content: center; font-size: 20px; margin-bottom: 8px;">🏁</div>` :
+                        `<div class="team-placeholder" style="width: 50px; height: 50px; border-radius: 8px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 8px;">🏁</div>`
+                    }
+                    <div class="team-name">${team.name}</div>
+                    <div class="price">$${team.price}M</div>
+                </div>
+            `).join('');
+
+            // Agregar event listeners
+            container.querySelectorAll('.team-card').forEach(card => {
+                card.addEventListener('click', () => selectTeam(parseInt(card.dataset.id)));
+            });
+        }
+
+        function selectDriver(driverId) {
+            const driverIndex = selectedDrivers.indexOf(driverId);
+            
+            if (driverIndex > -1) {
+                // Deseleccionar piloto
+                selectedDrivers.splice(driverIndex, 1);
+            } else {
+                // Seleccionar piloto (máximo 5)
+                if (selectedDrivers.length < 5) {
+                    selectedDrivers.push(driverId);
+                } else {
+                    showMessage('Solo puedes seleccionar 5 pilotos', 'error');
+                    return;
+                }
+            }
+            
+            updateUI();
+        }
+
+        function selectTeam(teamId) {
+            selectedTeam = selectedTeam === teamId ? null : teamId;
+            updateUI();
+        }
+
+        function updateUI() {
+            // Actualizar cards seleccionadas
+            document.querySelectorAll('.driver-card').forEach(card => {
+                const driverId = parseInt(card.dataset.id);
+                card.classList.toggle('selected', selectedDrivers.includes(driverId));
+            });
+
+            document.querySelectorAll('.team-card').forEach(card => {
+                const teamId = parseInt(card.dataset.id);
+                card.classList.toggle('selected', selectedTeam === teamId);
+            });
+
+            // Actualizar contadores
+            document.getElementById('driver-count').textContent = selectedDrivers.length;
+            document.getElementById('team-count').textContent = selectedTeam ? 1 : 0;
+
+            // Calcular presupuesto usado
+            const usedBudget = calculateUsedBudget();
+            const remainingBudget = totalBudget - usedBudget;
+            
+            document.getElementById('remaining-budget').textContent = remainingBudget.toFixed(1);
+            
+            // Habilitar/deshabilitar botón guardar
+            const saveButton = document.getElementById('save-team');
+            const canSave = selectedDrivers.length === 5 && selectedTeam && remainingBudget >= 0;
+            saveButton.disabled = !canSave;
+        }
+
+        function calculateUsedBudget() {
+            let total = 0;
+            
+            selectedDrivers.forEach(driverId => {
+                const driver = drivers.find(d => d.id === driverId);
+                if (driver) total += driver.price;
+            });
+            
+            if (selectedTeam) {
+                const team = teams.find(t => t.id === selectedTeam);
+                if (team) total += team.price;
+            }
+            
+            return total;
+        }
+
+        async function saveTeam() {
+            // Guardado local (sin fetch)
+            showMessage('¡Equipo guardado exitosamente!', 'success');
+            showTeamSummary();
+
+            // Actualizar historial (simulado)
+            if (!userHistory[currentUser.id]) {
+                userHistory[currentUser.id] = [];
+            }
+
+            const driverNames = selectedDrivers.map(id => {
+                const driver = drivers.find(d => d.id === id);
+                return driver ? driver.name : 'Desconocido';
+            }).join(', ');
+
+            const teamName = teams.find(t => t.id === selectedTeam)?.name || 'Desconocido';
+
+            userHistory[currentUser.id].push({
+                date: new Date().toISOString().split('T')[0],
+                action: `Equipo creado: Pilotos ${driverNames} - Escudería ${teamName}`
+            });
+
+            loadUserHistory();
+        }
+
+        function showMessage(text, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = text;
+            messageDiv.className = `message ${type}`;
+            messageDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        function showInitialMessage(text, type) {
+            initialMessage.textContent = text;
+            initialMessage.className = `message ${type}`;
+            initialMessage.style.display = 'block';
+            
+            setTimeout(() => {
+                initialMessage.style.display = 'none';
+            }, 5000);
+        }
+
+        function showTeamSummary() {
+            const summaryDiv = document.getElementById('team-summary');
+            const contentDiv = document.getElementById('summary-content');
+
+    const selectedDriversData = selectedDrivers.map(id =>
+        drivers.find(d => d.id === id)
+    );
+    const selectedTeamData = teams.find(t => t.id === selectedTeam);
+
+    const totalCost = calculateUsedBudget();
+
+    contentDiv.innerHTML = `
+        <div style="background:rgba(0,0,0,0.6);border-radius:12px;padding:18px 20px 10px 20px;box-shadow:0 2px 12px #0003;">
+            <h4 style="color:#ffff00;font-size:1.2em;margin-bottom:10px;text-align:center;">🚦 Pilotos Seleccionados</h4>
+            <ul style="list-style:none;padding:0;margin:0 0 18px 0;">
+                ${selectedDriversData.map(driver =>
+                    `<li style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                        <img src="${driver.image}" alt="${driver.name}" style="width:36px;height:36px;border-radius:50%;border:1.5px solid #fff3;object-fit:cover;">
+                        <span style="font-weight:bold;">${driver.name}</span>
+                        <span style="color:#aaa;font-size:0.95em;">(${driver.team})</span>
+                        <span style="margin-left:auto;color:#ffff00;font-weight:bold;">$${driver.price}M</span>
+                    </li>`
+                ).join('')}
+            </ul>
+            <h4 style="color:#00ffea;font-size:1.1em;margin-bottom:8px;text-align:center;">🏁 Equipo Seleccionado</h4>
+            <div style="display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:18px;">
+                <img src="${selectedTeamData.image}" alt="${selectedTeamData.name}" style="width:40px;height:40px;border-radius:8px;border:1.5px solid #fff3;object-fit:cover;">
+                <span style="font-weight:bold;">${selectedTeamData.name}</span>
+                <span style="color:#ffff00;font-weight:bold;">$${selectedTeamData.price}M</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:1.1em;margin-top:10px;">
+                <span><b>Costo Total:</b></span>
+                <span style="color:#ffff00;font-weight:bold;">$${totalCost.toFixed(1)}M</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:1.1em;">
+                <span><b>Presupuesto Restante:</b></span>
+                <span style="color:#00ff00;font-weight:bold;">$${(totalBudget - totalCost).toFixed(1)}M</span>
+            </div>
+        </div>
+    `;
+
+    summaryDiv.style.display = 'block';
+        }
+
+       /// --- PUNTOS Y DINERO POR USUARIO CON LOCALSTORAGE (HÍBRIDO) ---
+let userPoints = JSON.parse(localStorage.getItem('userPoints') || '{}');
+let userMoney = JSON.parse(localStorage.getItem('userMoney') || '{}');
+
+// Variables para dinero temporal de la sesión
+let sessionEarnings = {};
+
+function saveUserStats() {
+    localStorage.setItem('userPoints', JSON.stringify(userPoints));
+    localStorage.setItem('userMoney', JSON.stringify(userMoney));
+}
+
+function initUserStats() {
+    if (!currentUser || !currentUser.id) return;
+    const id = currentUser.id;
+    if (!(id in userPoints)) userPoints[id] = 0;
+    if (!(id in userMoney)) userMoney[id] = 100; // Solo 100 base iniciales
+    
+    // Inicializar ganancias de sesión
+    if (!(id in sessionEarnings)) sessionEarnings[id] = 0;
+    
+    updateUserStats();
+    saveUserStats();
+}
+
+function updateUserStats() {
+    if (!currentUser || !currentUser.id) return;
+    const id = currentUser.id;
+    const pts = userPoints[id] || 0;
+    const savedMoney = userMoney[id] || 0;
+    const sessionMoney = sessionEarnings[id] || 0;
+    
+    saveUserStats();
+    
+    // Modal del arcade - mostrar solo las ganancias de sesión
+    const modalPoints = document.getElementById('user-points');
+    const modalMoney = document.getElementById('user-money');
+    if (modalPoints) modalPoints.textContent = `🏆 Puntos: ${pts}`;
+    if (modalMoney) modalMoney.textContent = `💰 Dinero: $${sessionMoney}M`;
+    
+    // Cabecera principal
+    const mainPoints = document.getElementById('main-user-points');
+    if (mainPoints) mainPoints.textContent = pts;
+    
+    // El presupuesto total ES el dinero guardado + ganancias de sesión
+    totalBudget = savedMoney + sessionMoney;
+    const totalBudgetSpan = document.getElementById('total-budget');
+    if (totalBudgetSpan) totalBudgetSpan.textContent = totalBudget.toFixed(1);
+    
+    const remainingBudgetSpan = document.getElementById('remaining-budget');
+    if (remainingBudgetSpan && typeof calculateUsedBudget === 'function') {
+        const usedBudget = calculateUsedBudget();
+        const remainingBudget = totalBudget - usedBudget;
+        remainingBudgetSpan.textContent = remainingBudget.toFixed(1);
+        
+        // Botón guardar equipo
+        const saveButton = document.getElementById('save-team');
+        if (saveButton && Array.isArray(selectedDrivers)) {
+            const canSave = selectedDrivers.length === 5 && selectedTeam && remainingBudget >= 0;
+            saveButton.disabled = !canSave;
+        }
+    }
+}
+
+function applyGameRewards(gamePoints, gameMoney) {
+    if (!currentUser || !currentUser.id) return;
+    const id = currentUser.id;
+    
+    // Puntos se guardan inmediatamente
+    userPoints[id] = (userPoints[id] || 0) + gamePoints;
+    
+    // Dinero se acumula en la sesión temporal
+    sessionEarnings[id] = (sessionEarnings[id] || 0) + gameMoney;
+    
+    updateUserStats();
+}
+
+// NUEVA FUNCIÓN: Gastar dinero cuando se guarda un equipo
+function saveTeamAndSpendMoney() {
+    if (!currentUser || !currentUser.id) return;
+    
+    const usedBudget = calculateUsedBudget();
+    const id = currentUser.id;
+    const savedMoney = userMoney[id] || 0;
+    const sessionMoney = sessionEarnings[id] || 0;
+    const totalAvailable = savedMoney + sessionMoney;
+    
+    if (usedBudget > totalAvailable) {
+        alert('No tienes suficiente dinero para este equipo');
+        return false;
+    }
+    
+    // Primero gastar del dinero de sesión, luego del guardado
+    if (sessionMoney >= usedBudget) {
+        // Solo gastar de las ganancias de sesión
+        sessionEarnings[id] = sessionMoney - usedBudget;
+    } else {
+        // Gastar todo el dinero de sesión y parte del guardado
+        const remainingCost = usedBudget - sessionMoney;
+        sessionEarnings[id] = 0;
+        userMoney[id] = savedMoney - remainingCost;
+    }
+    
+    updateUserStats();
+    
+    // Aquí continúa tu lógica actual de guardar equipo
+    // ... resto del código de guardado ...
+    
+    console.log(`Equipo guardado. Dinero restante: $${(userMoney[id] + sessionEarnings[id])}M`);
+    return true;
+}
+
+// NUEVA FUNCIÓN: Guardar ganancias de sesión al cerrar sesión
+function saveSessionEarnings() {
+    if (!currentUser || !currentUser.id) return;
+    const id = currentUser.id;
+    const sessionMoney = sessionEarnings[id] || 0;
+    
+    if (sessionMoney > 0) {
+        userMoney[id] = (userMoney[id] || 0) + sessionMoney;
+        sessionEarnings[id] = 0;
+        saveUserStats();
+        console.log(`Ganancias de sesión guardadas: $${sessionMoney}M`);
+    }
+}
+
+// NUEVA FUNCIÓN: Llamar cuando el usuario cierre sesión
+function logout() {
+    saveSessionEarnings();
+    // ... resto de tu lógica de logout ...
+}
+
+// NUEVA FUNCIÓN: Llamar cuando se cierre la ventana
+window.addEventListener('beforeunload', function() {
+    saveSessionEarnings();
+});
+
+// --- CONTROL DE ARCADE ---
+function initArcadeEvents() {
+    if (window.arcadeEventsInitialized) return;
+    window.arcadeEventsInitialized = true;
+
+    const arcadeButton = document.getElementById('arcade-button');
+    const arcadeDropdown = document.getElementById('arcade-dropdown');
+    const arcadeModal = document.getElementById('arcade-modal');
+    const closeArcade = document.getElementById('close-arcade');
+
+    arcadeButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        arcadeDropdown.style.display = arcadeDropdown.style.display === 'block' ? 'none' : 'block';
+    });
+    document.addEventListener('click', (e) => {
+        if (!arcadeDropdown.contains(e.target) && e.target !== arcadeButton) {
+            arcadeDropdown.style.display = 'none';
+        }
+    });
+    document.querySelectorAll('.game-option').forEach(btn => {
+        btn.addEventListener('click', () => {
+            arcadeModal.style.display = 'flex';
+            arcadeDropdown.style.display = 'none';
+            // LLAMA A LA FUNCIÓN CORRECTA SEGÚN EL BOTÓN
+            if (btn.dataset.game === 'racing') {
+                startQuickRaceGame();
+            } else if (btn.dataset.game === 'memory') {
+                startMemoryF1Game();
+            } else if (btn.dataset.game === 'trivia') {
+                startTriviaF1Game();
+            } else if (btn.dataset.game === 'reaction') {
+                startReactionTimeGame();
+            } else {
+                document.getElementById('game-area').innerHTML = `<h2 style='color:#00ff88;text-align:center;'>${btn.textContent}</h2><p style='color:white;text-align:center;'>¡Próximamente!</p>`;
+                updateUserStats();
+            }
+        });
+    });
+    closeArcade.addEventListener('click', () => {
+        arcadeModal.style.display = 'none';
+    });
+    window.addEventListener('click', function(event) {
+        if (event.target === arcadeModal) {
+            arcadeModal.style.display = 'none';
+        }
+    });
+}
+
+  // --- MINIJUEGO: Mini Carrera ---
+function startQuickRaceGame() {
+    let gamePoints = 0, gameMoney = 0;
+    const gameArea = document.getElementById('game-area');
+    
+    const raceDrivers = [
+        "Verstappen", "Hamilton", "Leclerc", "Norris", "Alonso", "Sainz"
+    ];
+    const shuffled = raceDrivers.sort(() => Math.random() - 0.5).slice(0, 3);
+
+    gameArea.innerHTML = `
+        <h2 style="color:#ff8800;text-align:center;">🏎️ Mini Carrera</h2>
+        <p style="text-align:center;margin-bottom:20px;">Apuesta quién ganará y mira la carrera:</p>
+        <div style="text-align:center;margin-bottom:25px;">
+            ${shuffled.map((name, i) => `
+                <label style="margin:0 15px;font-size:1.1em;">
+                    <input type="radio" name="bet" value="${i}" ${i===0?'checked':''}> ${name}
+                </label>
+            `).join('')}
+        </div>
+        <button id="start-race" class="game-btn race-btn" style="display:block;margin:0 auto 30px auto;">Iniciar Carrera</button>
+        <div id="race-track">
+            ${shuffled.map((name, i) => `
+                <div class="race-row" data-i="${i}">
+                    <span class="race-car">🏎️</span>
+                    <span class="race-name">${name}</span>
+                </div>
+            `).join('')}
+        </div>
+        <div id="race-result"></div>
+    `;
+
+    document.getElementById('start-race').onclick = () => {
+        document.getElementById('start-race').disabled = true;
+        const bet = +document.querySelector('input[name="bet"]:checked').value;
+        const cars = document.querySelectorAll('.race-car');
+        const positions = [0, 0, 0];
+        const finish = 15;
+        let finished = false;
+        let winner = null;
+
+        function step() {
+            if (finished) return;
+            
+            for (let i = 0; i < 3; i++) {
+                if (positions[i] < finish) {
+                    if (Math.random() < 0.6) positions[i]++;
+                }
+                cars[i].style.marginLeft = (positions[i] * 25) + "px";
+            }
+            
+            for (let i = 0; i < 3; i++) {
+                if (positions[i] >= finish && !finished) {
+                    finished = true;
+                    winner = i;
+                    
+                    setTimeout(() => {
+                        const resultDiv = document.getElementById('race-result');
+                        if (bet === winner) {
+                            resultDiv.innerHTML = `<div class="result-message success">¡Ganaste la apuesta! (+5 pts, +5M)</div>`;
+                            gamePoints += 5;
+                            gameMoney += 5;
+                        } else {
+                            resultDiv.innerHTML = `<div class="result-message error">Perdiste, ganó ${shuffled[winner]} (+1 pt, +1M)</div>`;
+                            gamePoints += 1;
+                            gameMoney += 1;
+                        }
+                        
+                        applyGameRewards(gamePoints, gameMoney);
+                    }, 500);
+                    return;
+                }
+            }
+            
+            if (!finished) setTimeout(step, 150);
+        }
+        step();
+    };
+}
+
+// --- MINIJUEGO: Memoria F1 ---
+function startMemoryF1Game() {
+    let gamePoints = 0, gameMoney = 0;
+    const gameArea = document.getElementById('game-area');
+    
+    const driversList = [
+        "Verstappen", "Hamilton", "Leclerc", "Norris", "Alonso", "Sainz"
+    ];
+    const sequence = driversList.sort(() => Math.random() - 0.5).slice(0, 3);
+
+    gameArea.innerHTML = `
+        <h2 style="color:#00ff88;text-align:center;">🧠 Memoria F1</h2>
+        <p style="text-align:center;margin-bottom:25px;">Memoriza el orden de los pilotos:</p>
+        <div class="memory-sequence">
+            ${sequence.map(name => `<div class="memory-card">${name}</div>`).join('')}
+        </div>
+        <button id="hide-sequence" class="game-btn memory-btn" style="display:block;margin:0 auto 25px auto;">Listo, recordar</button>
+        <div id="memory-choices" style="display:none;text-align:center;"></div>
+        <div id="memory-result"></div>
+    `;
+
+    document.getElementById('hide-sequence').onclick = () => {
+        document.querySelectorAll('.memory-card').forEach(card => {
+            card.classList.add('hidden');
+            card.textContent = '';
+        });
+        
+        document.getElementById('hide-sequence').style.display = 'none';
+        const options = [...sequence].sort(() => Math.random() - 0.5);
+        const choicesDiv = document.getElementById('memory-choices');
+        choicesDiv.style.display = 'block';
+        
+        choicesDiv.innerHTML = `
+            <p style="margin-bottom:20px;font-size:1.1em;">Selecciona el orden correcto:</p>
+            <div style="display:flex;justify-content:center;gap:15px;margin-bottom:25px;">
+                ${[0,1,2].map(i => `
+                    <select data-i="${i}">
+                        <option value="">-- Posición ${i+1} --</option>
+                        ${options.map(name => `<option value="${name}">${name}</option>`).join('')}
+                    </select>
+                `).join('')}
+            </div>
+            <button id="check-memory" class="game-btn memory-btn">Comprobar</button>
+        `;
+        
+        document.getElementById('check-memory').onclick = () => {
+            const selects = document.querySelectorAll('#memory-choices select');
+            const answer = Array.from(selects).map(sel => sel.value);
+            const resultDiv = document.getElementById('memory-result');
+            
+            if (answer.join(',') === sequence.join(',')) {
+                resultDiv.innerHTML = `<div class="result-message success">¡Correcto! (+5 pts, +5M)</div>`;
+                gamePoints += 5;
+                gameMoney += 5;
+            } else {
+                resultDiv.innerHTML = `<div class="result-message error">Incorrecto. El orden era: ${sequence.join(' → ')} (+1 pt, +1M)</div>`;
+                gamePoints += 1;
+                gameMoney += 1;
+            }
+            
+            applyGameRewards(gamePoints, gameMoney);
+        };
+    };
+}
+
+// --- MINIJUEGO: Trivia F1 ---
+function startTriviaF1Game() {
+    let gamePoints = 0, gameMoney = 0;
+    const gameArea = document.getElementById('game-area');
+    
+    const questionBank = [
+        {
+            q: "¿Quién ganó el campeonato de F1 en 2023?",
+            a: ["Max Verstappen", "Lewis Hamilton", "Charles Leclerc", "Fernando Alonso"],
+            c: 0
+        },
+        {
+            q: "¿En qué país se corre el GP de Monza?",
+            a: ["Italia", "España", "Francia", "Mónaco"],
+            c: 0
+        },
+        {
+            q: "¿Qué escudería tiene más campeonatos de constructores?",
+            a: ["Ferrari", "Mercedes", "Red Bull", "McLaren"],
+            c: 0
+        },
+        {
+            q: "¿Quién es apodado 'El Nano'?",
+            a: ["Fernando Alonso", "Carlos Sainz", "Sergio Pérez", "Lewis Hamilton"],
+            c: 0
+        },
+        {
+            q: "¿Qué piloto es conocido como 'Checo'?",
+            a: ["Sergio Pérez", "Esteban Ocon", "Pierre Gasly", "Lando Norris"],
+            c: 0
+        }
+    ];
+    
+    const questions = questionBank.sort(() => Math.random() - 0.5).slice(0, 3);
+    let currentQuestion = 0;
+
+    function showQuestion() {
+        if (currentQuestion >= questions.length) {
+            gameArea.innerHTML = `
+                <h2 style="color:#ffff00;text-align:center;">❓ Trivia F1 - Completada</h2>
+                <div class="result-message success" style="font-size:1.5em;">
+                    ¡Terminaste! Puntaje: ${gamePoints}/${questions.length}
+                    <br>+${gamePoints} pts, +${gameMoney}M
+                </div>
+            `;
+            
+            applyGameRewards(gamePoints, gameMoney);
+            return;
+        }
+        
+        const q = questions[currentQuestion];
+        gameArea.innerHTML = `
+            <h2 style="color:#ffff00;text-align:center;">❓ Trivia F1</h2>
+            <p style="text-align:center;font-size:1.2em;margin:30px 0;font-weight:bold;">${q.q}</p>
+            <div style="max-width:500px;margin:0 auto;">
+                ${q.a.map((ans, i) => `
+                    <button class="trivia-answer" data-i="${i}">${ans}</button>
+                `).join('')}
+            </div>
+            <div id="trivia-result"></div>
+        `;
+        
+        document.querySelectorAll('.trivia-answer').forEach(btn => {
+            btn.onclick = () => {
+                const resultDiv = document.getElementById('trivia-result');
+                if (+btn.dataset.i === q.c) {
+                    gamePoints++;
+                    gameMoney++;
+                    resultDiv.innerHTML = `<div class="result-message success">¡Correcto!</div>`;
+                } else {
+                    resultDiv.innerHTML = `<div class="result-message error">Incorrecto. La respuesta era: ${q.a[q.c]}</div>`;
+                }
+                
+                setTimeout(() => {
+                    currentQuestion++;
+                    showQuestion();
+                }, 1500);
+            };
+        });
+    }
+    
+    showQuestion();
+}
+
+// --- MINIJUEGO: Tiempo de Reacción ---
+function startReactionTimeGame() {
+    let gamePoints = 0, gameMoney = 0;
+    const gameArea = document.getElementById('game-area');
+    
+    gameArea.innerHTML = `
+        <h2 style="color:#ff4444;text-align:center;">⚡ Tiempo de Reacción</h2>
+        <p style="text-align:center;margin-bottom:30px;">Haz clic en el área cuando cambie a verde lo más rápido posible.</p>
+        <div id="reaction-box" class="reaction-box reaction-waiting">Espera...</div>
+        <div id="reaction-result"></div>
+    `;
+
+    const box = document.getElementById('reaction-box');
+    const resultDiv = document.getElementById('reaction-result');
+    let canClick = false, startTime = 0, timeout;
+
+    function resetGame() {
+        box.textContent = "Espera...";
+        box.className = "reaction-box reaction-waiting";
+        canClick = false;
+        
+        timeout = setTimeout(() => {
+            box.textContent = "¡CLICK YA!";
+            box.className = "reaction-box reaction-ready";
+            canClick = true;
+            startTime = Date.now();
+        }, 1500 + Math.random() * 2500);
+    }
+
+    box.onclick = () => {
+        if (!canClick) {
+            resultDiv.innerHTML = `<div class="result-message error">¡Muy pronto! Espera al verde. (+1 pt, +1M)</div>`;
+            gamePoints += 1;
+            gameMoney += 1;
+            clearTimeout(timeout);
+        } else {
+            const reactionTime = Date.now() - startTime;
+            let message;
+            
+            if (reactionTime < 200) {
+                message = `<div class="result-message success">¡Increíble! Tiempo: ${reactionTime}ms (+10 pts, +10M)</div>`;
+                gamePoints += 10;
+                gameMoney += 10;
+            } else if (reactionTime < 400) {
+                message = `<div class="result-message success">¡Muy bueno! Tiempo: ${reactionTime}ms (+5 pts, +5M)</div>`;
+                gamePoints += 5;
+                gameMoney += 5;
+            } else {
+                message = `<div class="result-message warning">Tiempo: ${reactionTime}ms (+1 pt, +1M)</div>`;
+                gamePoints += 1;
+                gameMoney += 1;
+            }
+            
+            resultDiv.innerHTML = message;
+        }
+        
+        applyGameRewards(gamePoints, gameMoney);
+        
+        canClick = false;
+        box.textContent = "¡Completado!";
+        box.className = "reaction-box";
+        box.style.background = "#666";
+        clearTimeout(timeout);
+    };
+    
+    resetGame();
+}
+
+// --- FIN MINIJUEGO: Tiempo de Reacción ---
+</script>
+</body>
+</html>
