@@ -1064,7 +1064,7 @@ function renderDrivers() {
     summaryDiv.style.display = 'block';
         }
 
-       // --- SISTEMA DE DINERO CORREGIDO ---
+      // --- SISTEMA DE DINERO CORREGIDO ---
 let userPoints = JSON.parse(localStorage.getItem('userPoints') || '{}');
 let userMoney = JSON.parse(localStorage.getItem('userMoney') || '{}');
 
@@ -1085,6 +1085,9 @@ function initUserStats() {
     // Inicializar ganancias de sesión (siempre empezar en 0)
     sessionEarnings[id] = 0;
     
+    // Debug: mostrar valores al iniciar
+    console.log(`🚀 Iniciando sesión - Usuario: ${id}, Dinero guardado: ${userMoney[id]}M, Dinero sesión: ${sessionEarnings[id]}M`);
+    
     updateUserStats();
     saveUserStats();
 }
@@ -1098,11 +1101,11 @@ function updateUserStats() {
     
     saveUserStats();
     
-    // Modal del arcade - mostrar solo las ganancias de sesión
+    // Modal del arcade - mostrar el dinero total disponible
     const modalPoints = document.getElementById('user-points');
     const modalMoney = document.getElementById('user-money');
     if (modalPoints) modalPoints.textContent = `🏆 Puntos: ${pts}`;
-    if (modalMoney) modalMoney.textContent = `💰 Dinero: $${sessionMoney}M`;
+    if (modalMoney) modalMoney.textContent = `💰 Dinero: ${(savedMoney + sessionMoney).toFixed(1)}M`;
     
     // Cabecera principal
     const mainPoints = document.getElementById('main-user-points');
@@ -1126,6 +1129,9 @@ function updateUserStats() {
             saveButton.disabled = !canSave;
         }
     }
+    
+    // Debug: mostrar valores en consola
+    console.log(`💰 Debug - Dinero guardado: ${savedMoney}M, Dinero sesión: ${sessionMoney}M, Total: ${totalBudget}M`);
 }
 
 function applyGameRewards(gamePoints, gameMoney) {
@@ -1137,6 +1143,9 @@ function applyGameRewards(gamePoints, gameMoney) {
     
     // Dinero se acumula en la sesión temporal
     sessionEarnings[id] = (sessionEarnings[id] || 0) + gameMoney;
+    
+    // GUARDAR INMEDIATAMENTE después de cada juego
+    saveSessionEarnings();
     
     updateUserStats();
 }
@@ -1205,13 +1214,13 @@ function saveSessionEarnings() {
     const savedMoney = userMoney[id] || 0;
     const sessionMoney = sessionEarnings[id] || 0;
     
-    // Guardar el dinero total (guardado + sesión) como el nuevo dinero base
+    // SUMAR el dinero de sesión al dinero ya guardado
     const totalMoney = savedMoney + sessionMoney;
     userMoney[id] = totalMoney;
     sessionEarnings[id] = 0; // Resetear ganancias de sesión
     
     saveUserStats();
-    console.log(`Sesión guardada. Dinero total guardado: $${totalMoney}M`);
+    console.log(`Sesión guardada. Dinero previo: ${savedMoney}M + Ganancias: ${sessionMoney}M = Total: ${totalMoney}M`);
 }
 
 // FUNCIÓN: Llamar cuando el usuario cierre sesión
