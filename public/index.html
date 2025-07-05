@@ -1064,7 +1064,7 @@ function renderDrivers() {
     summaryDiv.style.display = 'block';
         }
 
-       /// --- PUNTOS Y DINERO POR USUARIO CON LOCALSTORAGE (HÍBRIDO) ---
+       // --- SISTEMA DE DINERO CORREGIDO ---
 let userPoints = JSON.parse(localStorage.getItem('userPoints') || '{}');
 let userMoney = JSON.parse(localStorage.getItem('userMoney') || '{}');
 
@@ -1082,8 +1082,8 @@ function initUserStats() {
     if (!(id in userPoints)) userPoints[id] = 0;
     if (!(id in userMoney)) userMoney[id] = 100; // Solo 100 base iniciales
     
-    // Inicializar ganancias de sesión
-    if (!(id in sessionEarnings)) sessionEarnings[id] = 0;
+    // Inicializar ganancias de sesión (siempre empezar en 0)
+    sessionEarnings[id] = 0;
     
     updateUserStats();
     saveUserStats();
@@ -1141,8 +1141,8 @@ function applyGameRewards(gamePoints, gameMoney) {
     updateUserStats();
 }
 
-// NUEVA FUNCIÓN: Gastar dinero cuando se guarda un equipo
-function saveTeamAndSpendMoney() {
+// FUNCIÓN MODIFICADA: Guardar equipo y gastar dinero PERMANENTEMENTE
+async function saveTeam() {
     if (!currentUser || !currentUser.id) return;
     
     const usedBudget = calculateUsedBudget();
@@ -1151,12 +1151,13 @@ function saveTeamAndSpendMoney() {
     const sessionMoney = sessionEarnings[id] || 0;
     const totalAvailable = savedMoney + sessionMoney;
     
+    // Verificar si hay suficiente dinero
     if (usedBudget > totalAvailable) {
-        alert('No tienes suficiente dinero para este equipo');
-        return false;
+        showMessage('No tienes suficiente dinero para este equipo', 'error');
+        return;
     }
     
-    // Primero gastar del dinero de sesión, luego del guardado
+    // DESCONTAR EL DINERO PERMANENTEMENTE
     if (sessionMoney >= usedBudget) {
         // Solo gastar de las ganancias de sesión
         sessionEarnings[id] = sessionMoney - usedBudget;
@@ -1167,40 +1168,73 @@ function saveTeamAndSpendMoney() {
         userMoney[id] = savedMoney - remainingCost;
     }
     
+    // GUARDAR INMEDIATAMENTE EN LOCALSTORAGE
+    saveUserStats();
     updateUserStats();
     
-    // Aquí continúa tu lógica actual de guardar equipo
-    // ... resto del código de guardado ...
+    // Mostrar mensaje de éxito
+    showMessage('¡Equipo guardado exitosamente!', 'success');
+    showTeamSummary();
+
+    // Actualizar historial (simulado)
+    if (!userHistory[currentUser.id]) {
+        userHistory[currentUser.id] = [];
+    }
+
+    const driverNames = selectedDrivers.map(id => {
+        const driver = drivers.find(d => d.id === id);
+        return driver ? driver.name : 'Desconocido';
+    }).join(', ');
+
+    const teamName = teams.find(t => t.id === selectedTeam)?.name || 'Desconocido';
+
+    userHistory[currentUser.id].push({
+        date: new Date().toISOString().split('T')[0],
+        action: `Equipo creado: Pilotos ${driverNames} - Escudería ${teamName} (Gastado: $${usedBudget}M)`
+    });
+
+    loadUserHistory();
     
-    console.log(`Equipo guardado. Dinero restante: $${(userMoney[id] + sessionEarnings[id])}M`);
-    return true;
+    console.log(`Equipo guardado. Dinero gastado: $${usedBudget}M. Dinero restante: $${(userMoney[id] + sessionEarnings[id])}M`);
 }
 
-// NUEVA FUNCIÓN: Guardar ganancias de sesión al cerrar sesión
+// FUNCIÓN: Guardar ganancias de sesión al cerrar sesión
 function saveSessionEarnings() {
     if (!currentUser || !currentUser.id) return;
     const id = currentUser.id;
+    const savedMoney = userMoney[id] || 0;
     const sessionMoney = sessionEarnings[id] || 0;
     
-    if (sessionMoney > 0) {
-        userMoney[id] = (userMoney[id] || 0) + sessionMoney;
-        sessionEarnings[id] = 0;
-        saveUserStats();
-        console.log(`Ganancias de sesión guardadas: $${sessionMoney}M`);
-    }
+    // Guardar el dinero total (guardado + sesión) como el nuevo dinero base
+    const totalMoney = savedMoney + sessionMoney;
+    userMoney[id] = totalMoney;
+    sessionEarnings[id] = 0; // Resetear ganancias de sesión
+    
+    saveUserStats();
+    console.log(`Sesión guardada. Dinero total guardado: $${totalMoney}M`);
 }
 
-// NUEVA FUNCIÓN: Llamar cuando el usuario cierre sesión
+// FUNCIÓN: Llamar cuando el usuario cierre sesión
 function logout() {
     saveSessionEarnings();
     // ... resto de tu lógica de logout ...
 }
 
-// NUEVA FUNCIÓN: Llamar cuando se cierre la ventana
+// FUNCIÓN: Llamar cuando se cierre la ventana
 window.addEventListener('beforeunload', function() {
     saveSessionEarnings();
 });
 
+// FUNCIÓN ADICIONAL: Resetear dinero de usuario (para pruebas)
+function resetUserMoney() {
+    if (!currentUser || !currentUser.id) return;
+    const id = currentUser.id;
+    userMoney[id] = 100;
+    sessionEarnings[id] = 0;
+    saveUserStats();
+    updateUserStats();
+    console.log('Dinero reseteado a $100M');
+}
 // --- CONTROL DE ARCADE ---
 function initArcadeEvents() {
     if (window.arcadeEventsInitialized) return;
@@ -1249,7 +1283,7 @@ function initArcadeEvents() {
     });
 }
 
-  // --- MINIJUEGO: Mini Carrera ---
+// --- MINIJUEGO: Mini Carrera ---
 function startQuickRaceGame() {
     let gamePoints = 0, gameMoney = 0;
     const gameArea = document.getElementById('game-area');
