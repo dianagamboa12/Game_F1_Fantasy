@@ -375,6 +375,127 @@
             background: #00ffea;
             color: #222;
         }
+
+        /* --- Botones de minijuegos arcade --- */
+.game-btn, .arcade-dropdown button {
+    background: linear-gradient(90deg, #00ffea 0%, #ff8800 100%);
+    color: #181818;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 28px;
+    font-size: 1.15em;
+    font-weight: bold;
+    margin: 10px 0;
+    cursor: pointer;
+    box-shadow: 0 2px 10px #00ffea33, 0 1px 0 #fff2 inset;
+    transition: transform 0.15s, box-shadow 0.15s, background 0.3s;
+    outline: none;
+    letter-spacing: 0.5px;
+}
+
+.game-btn:hover, .arcade-dropdown button:hover {
+    background: linear-gradient(90deg, #ff8800 0%, #00ffea 100%);
+    color: #222;
+    transform: scale(1.07);
+    box-shadow: 0 4px 18px #ff880055, 0 1px 0 #fff4 inset;
+}
+
+.game-btn:active, .arcade-dropdown button:active {
+    background: #00ffea;
+    color: #181818;
+    transform: scale(0.98);
+    box-shadow: 0 1px 4px #00ffea55;
+}
+
+/* --- Diseño arcade para selects del juego de memoria --- */
+#memory-choices select {
+    min-width: 90px;
+    max-width: 120px;
+    font-size: 0.98em;
+    padding: 7px 8px;
+    margin: 0 2px;
+    border-radius: 6px;
+    box-shadow: 0 1px 4px #00ffea22;
+}
+#memory-choices {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+@media (max-width: 480px) {
+    #memory-choices select {
+        min-width: 70px;
+        font-size: 0.92em;
+        padding: 6px 4px;
+    }
+    #memory-choices > div {
+        flex-direction: column !important;
+        gap: 5px !important;
+    }
+}
+
+/* --- Diseño arcade para el área de reacción --- */
+.reaction-box {
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto 20px auto;
+    padding: 40px 0;
+    border-radius: 16px;
+    font-size: 1.5em;
+    font-weight: bold;
+    text-align: center;
+    background: #222;
+    color: #fff;
+    box-shadow: 0 2px 18px #00ffea33, 0 1px 0 #fff2 inset;
+    cursor: pointer;
+    transition: background 0.3s, color 0.2s, transform 0.1s;
+    user-select: none;
+}
+.reaction-box.reaction-waiting {
+    background: linear-gradient(90deg, #222 60%, #ff8800 100%);
+    color: #fff;
+}
+.reaction-box.reaction-ready {
+    background: linear-gradient(90deg, #00ff00 60%, #00ffea 100%);
+    color: #181818;
+    transform: scale(1.04);
+    box-shadow: 0 4px 24px #00ffea55, 0 1px 0 #fff4 inset;
+}
+.reaction-box:active {
+    transform: scale(0.98);
+}
+
+/* --- Diseño para botones de trivia --- */
+.trivia-answer {
+    display: block;
+    width: 100%;
+    margin: 10px 0;
+    padding: 12px 0;
+    font-size: 1.08em;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(90deg, #ffff00 0%, #ff8800 100%);
+    color: #222;
+    box-shadow: 0 2px 8px #ff880033, 0 1px 0 #fff2 inset;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, transform 0.1s;
+}
+.trivia-answer:hover, .trivia-answer:focus {
+    background: linear-gradient(90deg, #ff8800 0%, #ffff00 100%);
+    color: #000;
+    transform: scale(1.04);
+}
+#game-area .trivia-answer {
+    max-width: 350px;
+    margin: 10px auto;
+}
+#game-area {
+    min-width: 0;
+    max-width: 100vw;
+    word-break: break-word;
+}
     </style>
 </head>
 <body>
@@ -494,17 +615,21 @@
     <script>
         // Datos de usuarios (simulando una base de datos)
         const users = [
-            { id: 1, username: 'jdoe', email: 'jdoe@example.com', password: 'password1' },
-            { id: 2, username: 'asmith', email: 'asmith@example.com', password: 'password2' },
-            { id: 3, username: 'bjohnson', email: 'bjohnson@example.com', password: 'password3' },
-            { id: 4, username: 'cmiller', email: 'cmiller@example.com', password: 'password4' },
-            { id: 5, username: 'dlee', email: 'dlee@example.com', password: 'password5' },
-            { id: 6, username: 'ewilson', email: 'ewilson@example.com', password: 'password6' },
-            { id: 7, username: 'fmoore', email: 'fmoore@example.com', password: 'password7' },
-            { id: 8, username: 'gclark', email: 'gclark@example.com', password: 'password8' },
-            { id: 9, username: 'hrodriguez', email: 'hrodriguez@example.com', password: 'password9' },
-            { id: 10, username: 'ikim', email: 'ikim@example.com', password: 'password10' },
-            { id: 11, username: 'samu23', email: 'samuel@example.com', password: 'samuelmora23' }
+            { id: 10, username: 'jdoe', email: 'jdoe@example.com', password: 'password1' },
+            { id: 20, username: 'asmith', email: 'asmith@example.com', password: 'password2' },
+            { id: 30, username: 'bjohnson', email: 'bjohnson@example.com', password: 'password3' },
+            { id: 40, username: 'cmiller', email: 'cmiller@example.com', password: 'password4' },
+            { id: 50, username: 'dlee', email: 'dlee@example.com', password: 'password5' },
+            { id: 60, username: 'ewilson', email: 'ewilson@example.com', password: 'password6' },
+            { id: 70, username: 'fmoore', email: 'fmoore@example.com', password: 'password7' },
+            { id: 80, username: 'gclark', email: 'gclark@example.com', password: 'password8' },
+            { id: 90, username: 'hrodriguez', email: 'hrodriguez@example.com', password: 'password9' },
+            { id: 11, username: 'ikim', email: 'ikim@example.com', password: 'password10' },
+            { id: 12, username: 'samu23', email: 'samuel@example.com', password: 'samuelmora23' },
+            { id: 13, username: 'flaco', email: 'flaco@example.com', password: 'flaco123' },
+            { id: 14, username: 'yansi', email: 'yansi@example.com', password: 'yansi123' },
+            { id: 15, username: 'diana', email: 'diana@example.com', password: 'diana123' }
+
         ];
 
         // Datos de historial (simulado)
@@ -1021,8 +1146,8 @@ function renderDrivers() {
         }
 
         function showTeamSummary() {
-            const summaryDiv = document.getElementById('team-summary');
-            const contentDiv = document.getElementById('summary-content');
+    const summaryDiv = document.getElementById('team-summary');
+    const contentDiv = document.getElementById('summary-content');
 
     const selectedDriversData = selectedDrivers.map(id =>
         drivers.find(d => d.id === id)
@@ -1030,6 +1155,14 @@ function renderDrivers() {
     const selectedTeamData = teams.find(t => t.id === selectedTeam);
 
     const totalCost = calculateUsedBudget();
+    
+    // CORRECCIÓN: Calcular el presupuesto restante DESPUÉS de la compra
+    if (!currentUser || !currentUser.id) return;
+    const id = currentUser.id;
+    const savedMoney = userMoney[id] || 0;
+    const sessionMoney = sessionEarnings[id] || 0;
+    const currentBudget = savedMoney + sessionMoney; // Presupuesto actualizado después de la compra
+    const remainingAfterPurchase = currentBudget; // Después de comprar, este ES el restante
 
     contentDiv.innerHTML = `
         <div style="background:rgba(0,0,0,0.6);border-radius:12px;padding:18px 20px 10px 20px;box-shadow:0 2px 12px #0003;">
@@ -1054,17 +1187,20 @@ function renderDrivers() {
                 <span><b>Costo Total:</b></span>
                 <span style="color:#ffff00;font-weight:bold;">$${totalCost.toFixed(1)}M</span>
             </div>
-            <div style="display:flex;justify-content:space-between;font-size:1.1em;">
+            <div style="display:flex;justify-content:space-between;font-size:1.1em;margin-bottom:10px;">
+                <span><b>Dinero Gastado:</b></span>
+                <span style="color:#ff6666;font-weight:bold;">-$${totalCost.toFixed(1)}M</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:1.1em;border-top:1px solid #fff3;padding-top:10px;">
                 <span><b>Presupuesto Restante:</b></span>
-                <span style="color:#00ff00;font-weight:bold;">$${(totalBudget - totalCost).toFixed(1)}M</span>
+                <span style="color:#00ff00;font-weight:bold;">$${remainingAfterPurchase.toFixed(1)}M</span>
             </div>
         </div>
     `;
 
     summaryDiv.style.display = 'block';
-        }
-
-      // --- SISTEMA DE DINERO CORREGIDO ---
+}
+     // --- SISTEMA DE DINERO CORREGIDO ---
 let userPoints = JSON.parse(localStorage.getItem('userPoints') || '{}');
 let userMoney = JSON.parse(localStorage.getItem('userMoney') || '{}');
 
@@ -1119,7 +1255,7 @@ function updateUserStats() {
     const remainingBudgetSpan = document.getElementById('remaining-budget');
     if (remainingBudgetSpan && typeof calculateUsedBudget === 'function') {
         const usedBudget = calculateUsedBudget();
-        const remainingBudget = totalBudget - usedBudget;
+        const remainingBudget = Math.max(0, totalBudget - usedBudget); // NUNCA mostrar negativo
         remainingBudgetSpan.textContent = remainingBudget.toFixed(1);
         
         // Botón guardar equipo
@@ -1179,7 +1315,12 @@ async function saveTeam() {
     
     // GUARDAR INMEDIATAMENTE EN LOCALSTORAGE
     saveUserStats();
+    
+    // ACTUALIZAR INTERFAZ DESPUÉS DE LA COMPRA
     updateUserStats();
+    
+    // Actualizar específicamente el presupuesto restante
+    updateBudgetDisplay();
     
     // Mostrar mensaje de éxito
     showMessage('¡Equipo guardado exitosamente!', 'success');
@@ -1204,7 +1345,33 @@ async function saveTeam() {
 
     loadUserHistory();
     
-    console.log(`Equipo guardado. Dinero gastado: $${usedBudget}M. Dinero restante: $${(userMoney[id] + sessionEarnings[id])}M`);
+    const finalMoney = userMoney[id] + sessionEarnings[id];
+    console.log(`Equipo guardado. Dinero gastado: $${usedBudget}M. Dinero restante: $${finalMoney}M`);
+}
+
+// NUEVA FUNCIÓN: Actualizar display del presupuesto después de compra
+function updateBudgetDisplay() {
+    if (!currentUser || !currentUser.id) return;
+    const id = currentUser.id;
+    const savedMoney = userMoney[id] || 0;
+    const sessionMoney = sessionEarnings[id] || 0;
+    const currentTotal = savedMoney + sessionMoney;
+    
+    // Actualizar presupuesto total disponible
+    totalBudget = currentTotal;
+    const totalBudgetSpan = document.getElementById('total-budget');
+    if (totalBudgetSpan) totalBudgetSpan.textContent = currentTotal.toFixed(1);
+    
+    // Actualizar presupuesto restante (debe ser igual al total después de compra)
+    const remainingBudgetSpan = document.getElementById('remaining-budget');
+    if (remainingBudgetSpan) {
+        // Después de una compra exitosa, el presupuesto restante = presupuesto total
+        remainingBudgetSpan.textContent = currentTotal.toFixed(1);
+    }
+    
+    // Actualizar dinero en modal
+    const modalMoney = document.getElementById('user-money');
+    if (modalMoney) modalMoney.textContent = `💰 Dinero: ${currentTotal.toFixed(1)}M`;
 }
 
 // FUNCIÓN: Guardar ganancias de sesión al cerrar sesión
@@ -1405,8 +1572,8 @@ function startMemoryF1Game() {
         choicesDiv.style.display = 'block';
         
         choicesDiv.innerHTML = `
-            <p style="margin-bottom:20px;font-size:1.1em;">Selecciona el orden correcto:</p>
-            <div style="display:flex;justify-content:center;gap:15px;margin-bottom:25px;">
+            <p style="margin-bottom:12px;font-size:1.05em;">Selecciona el orden correcto:</p>
+            <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:18px;">
                 ${[0,1,2].map(i => `
                     <select data-i="${i}">
                         <option value="">-- Posición ${i+1} --</option>
@@ -1443,33 +1610,474 @@ function startTriviaF1Game() {
     const gameArea = document.getElementById('game-area');
     
     const questionBank = [
-        {
-            q: "¿Quién ganó el campeonato de F1 en 2023?",
-            a: ["Max Verstappen", "Lewis Hamilton", "Charles Leclerc", "Fernando Alonso"],
-            c: 0
-        },
-        {
-            q: "¿En qué país se corre el GP de Monza?",
-            a: ["Italia", "España", "Francia", "Mónaco"],
-            c: 0
-        },
-        {
-            q: "¿Qué escudería tiene más campeonatos de constructores?",
-            a: ["Ferrari", "Mercedes", "Red Bull", "McLaren"],
-            c: 0
-        },
-        {
-            q: "¿Quién es apodado 'El Nano'?",
-            a: ["Fernando Alonso", "Carlos Sainz", "Sergio Pérez", "Lewis Hamilton"],
-            c: 0
-        },
-        {
-            q: "¿Qué piloto es conocido como 'Checo'?",
-            a: ["Sergio Pérez", "Esteban Ocon", "Pierre Gasly", "Lando Norris"],
-            c: 0
-        }
-    ];
-    
+    // === PILOTOS ACTUALES ===
+    {
+        q: "¿Quién ganó el campeonato de F1 en 2023?",
+        a: ["Max Verstappen", "Lewis Hamilton", "Charles Leclerc", "Fernando Alonso"],
+        c: 0
+    },
+    {
+        q: "¿Qué piloto es conocido como 'Checo'?",
+        a: ["Sergio Pérez", "Esteban Ocon", "Pierre Gasly", "Lando Norris"],
+        c: 0
+    },
+    {
+        q: "¿Quién es apodado 'El Nano'?",
+        a: ["Fernando Alonso", "Carlos Sainz", "Sergio Pérez", "Lewis Hamilton"],
+        c: 0
+    },
+    {
+        q: "¿Qué número usa Max Verstappen?",
+        a: ["1", "33", "44", "16"],
+        c: 0
+    },
+    {
+        q: "¿Cuál es el número de Lewis Hamilton?",
+        a: ["44", "1", "77", "33"],
+        c: 0
+    },
+    {
+        q: "¿De qué país es Charles Leclerc?",
+        a: ["Mónaco", "Francia", "Italia", "Bélgica"],
+        c: 0
+    },
+    {
+        q: "¿Cuántos campeonatos tiene Lewis Hamilton?",
+        a: ["7", "6", "5", "8"],
+        c: 0
+    },
+    {
+        q: "¿En qué año debutó Fernando Alonso en F1?",
+        a: ["2001", "2000", "2002", "2003"],
+        c: 0
+    },
+    {
+        q: "¿Qué piloto corrió para McLaren en 2023?",
+        a: ["Lando Norris", "Oscar Piastri", "Daniel Ricciardo", "Carlos Sainz"],
+        c: 0
+    },
+    {
+        q: "¿Cuál es la nacionalidad de George Russell?",
+        a: ["Británica", "Alemana", "Holandesa", "Australiana"],
+        c: 0
+    },
+
+    // === ESCUDERÍAS ===
+    {
+        q: "¿En qué país se corre el GP de Monza?",
+        a: ["Italia", "España", "Francia", "Mónaco"],
+        c: 0
+    },
+    {
+        q: "¿Qué escudería tiene más campeonatos de constructores?",
+        a: ["Ferrari", "Mercedes", "Red Bull", "McLaren"],
+        c: 0
+    },
+    {
+        q: "¿Cuál es el nombre completo del equipo Red Bull?",
+        a: ["Red Bull Racing", "Red Bull F1 Team", "Red Bull Formula One", "Red Bull Racing Honda"],
+        c: 0
+    },
+    {
+        q: "¿En qué año se fundó la escudería Ferrari?",
+        a: ["1929", "1930", "1950", "1947"],
+        c: 0
+    },
+    {
+        q: "¿Qué motor usa Mercedes en 2023?",
+        a: ["Mercedes", "Honda", "Ferrari", "Renault"],
+        c: 0
+    },
+    {
+        q: "¿Cuál es el equipo hermano de Red Bull?",
+        a: ["AlphaTauri", "Toro Rosso", "Alpha Romeo", "Haas"],
+        c: 0
+    },
+    {
+        q: "¿Qué escudería tiene su sede en Woking?",
+        a: ["McLaren", "Mercedes", "Red Bull", "Aston Martin"],
+        c: 0
+    },
+    {
+        q: "¿Cuántos campeonatos de constructores tiene McLaren?",
+        a: ["8", "7", "9", "6"],
+        c: 0
+    },
+    {
+        q: "¿Qué color es tradicional de Ferrari?",
+        a: ["Rojo", "Amarillo", "Verde", "Azul"],
+        c: 0
+    },
+    {
+        q: "¿Cuál es el nombre del equipo de Aston Martin anteriormente?",
+        a: ["Racing Point", "Force India", "Jordan", "Lotus"],
+        c: 0
+    },
+
+    // === CIRCUITOS ===
+    {
+        q: "¿En qué circuito se corre el GP de Mónaco?",
+        a: ["Monte Carlo", "Paul Ricard", "Silverstone", "Spa"],
+        c: 0
+    },
+    {
+        q: "¿Cuál es la curva más famosa de Silverstone?",
+        a: ["Copse", "Maggotts", "Becketts", "Stowe"],
+        c: 0
+    },
+    {
+        q: "¿En qué país está el circuito de Spa-Francorchamps?",
+        a: ["Bélgica", "Francia", "Holanda", "Alemania"],
+        c: 0
+    },
+    {
+        q: "¿Cuál es el circuito más largo del calendario F1?",
+        a: ["Spa-Francorchamps", "Silverstone", "Suzuka", "Monza"],
+        c: 0
+    },
+    {
+        q: "¿En qué ciudad se encuentra el circuito de Interlagos?",
+        a: ["São Paulo", "Río de Janeiro", "Brasília", "Salvador"],
+        c: 0
+    },
+    {
+        q: "¿Cuál es la recta más larga de la F1?",
+        a: ["Monza", "Spa", "Silverstone", "Baku"],
+        c: 0
+    },
+    {
+        q: "¿En qué año se construyó el circuito de Mónaco?",
+        a: ["1929", "1930", "1950", "1925"],
+        c: 0
+    },
+    {
+        q: "¿Cuántas curvas tiene el circuito de Suzuka?",
+        a: ["18", "16", "17", "19"],
+        c: 0
+    },
+    {
+        q: "¿Qué circuito es conocido como 'El Templo de la Velocidad'?",
+        a: ["Monza", "Silverstone", "Spa", "Hockenheim"],
+        c: 0
+    },
+    {
+        q: "¿En qué país se corre el GP de Singapur?",
+        a: ["Singapur", "Malasia", "Tailandia", "Indonesia"],
+        c: 0
+    },
+
+    // === HISTORIA F1 ===
+    {
+        q: "¿En qué año comenzó la Fórmula 1?",
+        a: ["1950", "1949", "1951", "1948"],
+        c: 0
+    },
+    {
+        q: "¿Quién fue el primer campeón de F1?",
+        a: ["Giuseppe Farina", "Juan Manuel Fangio", "Alberto Ascari", "Mike Hawthorn"],
+        c: 0
+    },
+    {
+        q: "¿Cuántos campeonatos ganó Juan Manuel Fangio?",
+        a: ["5", "4", "6", "3"],
+        c: 0
+    },
+    {
+        q: "¿Qué piloto ganó más carreras en los 70s?",
+        a: ["Jackie Stewart", "Niki Lauda", "James Hunt", "Emerson Fittipaldi"],
+        c: 0
+    },
+    {
+        q: "¿En qué año murió Ayrton Senna?",
+        a: ["1994", "1993", "1995", "1992"],
+        c: 0
+    },
+    {
+        q: "¿Cuál fue el último GP que ganó Ayrton Senna?",
+        a: ["Australia 1993", "Brasil 1991", "Mónaco 1993", "Japón 1993"],
+        c: 0
+    },
+    {
+        q: "¿Quién fue campeón en 1976?",
+        a: ["James Hunt", "Niki Lauda", "Mario Andretti", "Jody Scheckter"],
+        c: 0
+    },
+    {
+        q: "¿En qué año se introdujo el DRS?",
+        a: ["2011", "2010", "2012", "2009"],
+        c: 0
+    },
+    {
+        q: "¿Cuál fue la primera escudería en ganar un campeonato?",
+        a: ["Alfa Romeo", "Ferrari", "Mercedes", "Maserati"],
+        c: 0
+    },
+    {
+        q: "¿Qué piloto tiene más pole positions?",
+        a: ["Lewis Hamilton", "Ayrton Senna", "Michael Schumacher", "Sebastian Vettel"],
+        c: 0
+    },
+
+    // === RÉCORDS Y ESTADÍSTICAS ===
+    {
+        q: "¿Quién tiene más victorias en F1?",
+        a: ["Lewis Hamilton", "Michael Schumacher", "Max Verstappen", "Sebastian Vettel"],
+        c: 0
+    },
+    {
+        q: "¿Cuál es la vuelta más rápida oficial en F1?",
+        a: ["1:19.440", "1:18.887", "1:20.123", "1:19.983"],
+        c: 0
+    },
+    {
+        q: "¿Qué piloto debutó más joven en F1?",
+        a: ["Max Verstappen", "Jaime Alguersuari", "Sebastian Vettel", "Daniil Kvyat"],
+        c: 0
+    },
+    {
+        q: "¿Cuántos puntos otorga una victoria?",
+        a: ["25", "20", "30", "15"],
+        c: 0
+    },
+    {
+        q: "¿Qué piloto tuvo más abandonos en una temporada?",
+        a: ["Andrea de Cesaris", "Jean-Pierre Jarier", "Derek Warwick", "Stefan Johansson"],
+        c: 0
+    },
+    {
+        q: "¿Cuál es el mayor número de carreras en una temporada?",
+        a: ["24", "22", "23", "21"],
+        c: 0
+    },
+    {
+        q: "¿Qué piloto corrió más GPs sin ganar?",
+        a: ["Nico Hulkenberg", "Nick Heidfeld", "Chris Amon", "Jean Alesi"],
+        c: 0
+    },
+    {
+        q: "¿Cuál es la diferencia más pequeña en una llegada?",
+        a: ["0.010s", "0.007s", "0.014s", "0.003s"],
+        c: 0
+    },
+    {
+        q: "¿Cuántos campeonatos consecutivos ganó Sebastian Vettel?",
+        a: ["4", "3", "5", "2"],
+        c: 0
+    },
+    {
+        q: "¿Qué escudería tuvo más 1-2 en una temporada?",
+        a: ["Mercedes", "Ferrari", "Red Bull", "McLaren"],
+        c: 0
+    },
+
+    // === TECNOLOGÍA ===
+    {
+        q: "¿Cuántos cilindros tienen los motores actuales de F1?",
+        a: ["6", "8", "4", "10"],
+        c: 0
+    },
+    {
+        q: "¿Qué significa DRS?",
+        a: ["Drag Reduction System", "Direct Racing System", "Drive Reduction System", "Dynamic Racing System"],
+        c: 0
+    },
+    {
+        q: "¿Cuántos tipos de neumáticos hay por fin de semana?",
+        a: ["3", "4", "2", "5"],
+        c: 0
+    },
+    {
+        q: "¿Qué significa ERS?",
+        a: ["Energy Recovery System", "Electronic Racing System", "Engine Reduction System", "Electric Racing System"],
+        c: 0
+    },
+    {
+        q: "¿Cuál es la velocidad máxima alcanzada en F1?",
+        a: ["372.6 km/h", "365.1 km/h", "378.9 km/h", "369.9 km/h"],
+        c: 0
+    },
+    {
+        q: "¿Cuánto pesa un monoplaza actual?",
+        a: ["798 kg", "750 kg", "825 kg", "780 kg"],
+        c: 0
+    },
+    {
+        q: "¿Qué combustible usan los F1 actuales?",
+        a: ["E10", "E85", "Gasolina pura", "E5"],
+        c: 0
+    },
+    {
+        q: "¿Cuántas marchas tienen las cajas de cambios?",
+        a: ["8", "7", "6", "9"],
+        c: 0
+    },
+    {
+        q: "¿Qué significa MGU-K?",
+        a: ["Motor Generator Unit - Kinetic", "Motor Generator Unit - Kinematic", "Motor Generation Unit - Kinetic", "Motor Generator Unit - Kernel"],
+        c: 0
+    },
+    {
+        q: "¿Cuántos caballos de fuerza tiene un motor F1?",
+        a: ["1000+", "800-900", "1200+", "700-800"],
+        c: 0
+    },
+
+    // === REGLAMENTO ===
+    {
+        q: "¿Cuántos puntos necesitas para obtener la superlicencia?",
+        a: ["40", "35", "45", "30"],
+        c: 0
+    },
+    {
+        q: "¿Cuánto tiempo dura la clasificación Q1?",
+        a: ["18 minutos", "15 minutos", "20 minutos", "12 minutos"],
+        c: 0
+    },
+    {
+        q: "¿Cuántos pilotos pasan a Q2?",
+        a: ["15", "12", "10", "16"],
+        c: 0
+    },
+    {
+        q: "¿Cuál es la penalización por exceso de velocidad en boxes?",
+        a: ["5 segundos", "10 segundos", "3 segundos", "Stop & Go"],
+        c: 0
+    },
+    {
+        q: "¿Cuántos motores puede usar un piloto por temporada?",
+        a: ["3", "4", "2", "5"],
+        c: 0
+    },
+    {
+        q: "¿Cuándo se puede usar el DRS?",
+        a: ["En zonas designadas si estás a menos de 1s", "En cualquier momento", "Solo en clasificación", "En zonas designadas siempre"],
+        c: 0
+    },
+    {
+        q: "¿Cuántos juegos de neumáticos secos hay por fin de semana?",
+        a: ["13", "11", "15", "9"],
+        c: 0
+    },
+    {
+        q: "¿Cuál es la velocidad límite en el pit lane?",
+        a: ["80 km/h", "60 km/h", "100 km/h", "70 km/h"],
+        c: 0
+    },
+    {
+        q: "¿Cuántos puntos da la vuelta rápida?",
+        a: ["1", "2", "3", "0"],
+        c: 0
+    },
+    {
+        q: "¿Cuánto combustible máximo pueden cargar?",
+        a: ["110 kg", "100 kg", "120 kg", "105 kg"],
+        c: 0
+    },
+
+    // === PILOTOS HISTÓRICOS ===
+    {
+        q: "¿Cuántos campeonatos ganó Michael Schumacher?",
+        a: ["7", "6", "5", "8"],
+        c: 0
+    },
+    {
+        q: "¿Con qué escudería ganó Alain Prost más campeonatos?",
+        a: ["McLaren", "Ferrari", "Renault", "Williams"],
+        c: 0
+    },
+    {
+        q: "¿Cuántas carreras ganó Ayrton Senna?",
+        a: ["41", "39", "43", "35"],
+        c: 0
+    },
+    {
+        q: "¿Qué piloto fue apodado 'El Profesor'?",
+        a: ["Alain Prost", "Niki Lauda", "Jackie Stewart", "Nelson Piquet"],
+        c: 0
+    },
+    {
+        q: "¿Cuántos campeonatos ganó Niki Lauda?",
+        a: ["3", "2", "4", "1"],
+        c: 0
+    },
+    {
+        q: "¿Qué piloto corrió con el número 27 en los 90s?",
+        a: ["Jean Alesi", "Gerhard Berger", "Thierry Boutsen", "Riccardo Patrese"],
+        c: 0
+    },
+    {
+        q: "¿Cuántos años corrió Rubens Barrichello en F1?",
+        a: ["19", "18", "20", "17"],
+        c: 0
+    },
+    {
+        q: "¿Qué piloto fue campeón con Benetton?",
+        a: ["Michael Schumacher", "Nelson Piquet", "Gerhard Berger", "Teo Fabi"],
+        c: 0
+    },
+    {
+        q: "¿Cuántas pole positions tuvo Ayrton Senna?",
+        a: ["65", "61", "68", "59"],
+        c: 0
+    },
+    {
+        q: "¿Qué piloto ganó el primer GP de Australia?",
+        a: ["Keke Rosberg", "Alain Prost", "Nigel Mansell", "Nelson Piquet"],
+        c: 0
+    },
+
+    // === CURIOSIDADES ===
+    {
+        q: "¿Cuál es el GP más corto de la historia?",
+        a: ["Bélgica 2021", "Australia 2020", "Malasia 2009", "Canadá 2011"],
+        c: 0
+    },
+    {
+        q: "¿Qué piloto ha corrido para más escuderías?",
+        a: ["Rubens Barrichello", "Fernando Alonso", "Jarno Trulli", "Felipe Massa"],
+        c: 0
+    },
+    {
+        q: "¿Cuál es el circuito más nuevo del calendario?",
+        a: ["Las Vegas", "Miami", "Jeddah", "Losail"],
+        c: 0
+    },
+    {
+        q: "¿Qué significa 'Safety Car'?",
+        a: ["Coche de seguridad", "Coche de prueba", "Coche médico", "Coche de rescate"],
+        c: 0
+    },
+    {
+        q: "¿Cuántos marshals hay aproximadamente en un GP?",
+        a: ["800-1000", "500-600", "1200-1500", "300-400"],
+        c: 0
+    },
+    {
+        q: "¿Qué piloto tuvo más compañeros de equipo?",
+        a: ["Fernando Alonso", "Jenson Button", "Felipe Massa", "Kimi Raikkonen"],
+        c: 0
+    },
+    {
+        q: "¿Cuál es el sobrenombre de Kimi Raikkonen?",
+        a: ["Iceman", "The Flying Finn", "Kimster", "Ice King"],
+        c: 0
+    },
+    {
+        q: "¿Qué escudería tuvo los colores rosa?",
+        a: ["Racing Point", "Force India", "Lotus", "Caterham"],
+        c: 0
+    },
+    {
+        q: "¿Cuál es el himno no oficial de la F1?",
+        a: ["Simply the Best", "We Are the Champions", "The Final Countdown", "Eye of the Tiger"],
+        c: 0
+    },
+    {
+        q: "¿En qué año se introdujo el halo?",
+        a: ["2018", "2017", "2019", "2016"],
+        c: 0
+    }
+];
     const questions = questionBank.sort(() => Math.random() - 0.5).slice(0, 3);
     let currentQuestion = 0;
 
@@ -1593,3 +2201,4 @@ function startReactionTimeGame() {
 </script>
 </body>
 </html>
+
